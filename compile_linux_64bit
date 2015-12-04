@@ -1,0 +1,28 @@
+#!/bin/sh
+
+OPTION=`echo $1 | tr "A-Z" "a-z"`
+
+
+echo "================ compiling librabbitmq for linux ================"
+
+cd prj_linux
+
+if [ "$OPTION" != "noclean" ]; then
+           make -f makefile_linux_d clean;
+fi
+
+make -f makefile_linux_d BIT=64 1> ../compileinfo/librabbitmq_linux_d_64bit.txt 2>&1
+echo makefile_linux_d 64bit completed!
+
+
+
+if [ "$OPTION" != "noclean" ]; then
+           make -f makefile_linux_r clean;
+fi
+
+make -f makefile_linux_r BIT=64 1> ../compileinfo/librabbitmq_linux_r_64bit.txt 2>&1
+echo makefile_linux_r 64bit completed!
+
+cd ..
+
+

@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{9597A591-B2A7-4B17-B0D8-02706AA7D96F}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>librabbitmq</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)..\Lib_$(Configuration)\</OutDir>
+    <TargetExt>.dll</TargetExt>
+    <LinkIncremental>
+    </LinkIncremental>
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)..\Lib_$(Configuration)\</OutDir>
+    <TargetExt>.dll</TargetExt>
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;
+_USRDLL;_WIN32;AMQP_BUILD;HAVE_CONFIG_H;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\include;..\include\win32;..\include\win32\msinttypes;..\include\libevent2;..\include\libevent2\win;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\Lib_$(Configuration)\win32\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;libevent_core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <PerUserRedirection>
+      </PerUserRedirection>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_USRDLL;_WIN32;AMQP_BUILD;HAVE_CONFIG_H;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\include;..\include\win32;..\include\win32\msinttypes;..\include\libevent2;..\include\libevent2\win;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <CompileAs>CompileAsC</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\Lib_$(Configuration)\win32\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;libevent_core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\amqp_api.c" />
+    <ClCompile Include="..\src\amqp_api2.c" />
+    <ClCompile Include="..\src\amqp_connection.c" />
+    <ClCompile Include="..\src\amqp_framing.c" />
+    <ClCompile Include="..\src\amqp_fsm.c" />
+    <ClCompile Include="..\src\amqp_mem.c" />
+    <ClCompile Include="..\src\amqp_mq.c" />
+    <ClCompile Include="..\src\amqp_socket.c" />
+    <ClCompile Include="..\src\amqp_socket2.c" />
+    <ClCompile Include="..\src\amqp_table.c" />
+    <ClCompile Include="..\src\amqp_tcp_socket.c" />
+    <ClCompile Include="..\src\amqp_timer.c" />
+    <ClCompile Include="..\src\win32\threads.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\amqp.h" />
+    <ClInclude Include="..\include\amqp_framing.h" />
+    <ClInclude Include="..\include\amqp_mq.h" />
+    <ClInclude Include="..\include\amqp_private.h" />
+    <ClInclude Include="..\include\amqp_socket.h" />
+    <ClInclude Include="..\include\amqp_ssl_socket.h" />
+    <ClInclude Include="..\include\amqp_tcp_socket.h" />
+    <ClInclude Include="..\include\amqp_timer.h" />
+    <ClInclude Include="..\include\win32\config.h" />
+    <ClInclude Include="..\include\win32\msinttypes\stdint.h" />
+    <ClInclude Include="..\include\win32\threads.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

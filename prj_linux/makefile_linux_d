@@ -1,0 +1,73 @@
+
+#########################################################################
+###
+###  DESCRIPTION:
+###    Common definitions for all Makefiles in OSP linux project.
+###
+#########################################################################
+
+TOP := ..
+
+COMM_DIR := ..
+
+SRC_DIR := $(TOP)/src
+
+CURDIR := ./
+
+## Name and type of the target for this Makefile
+
+SO_TARGET      := rabbitmq_d
+
+## Define debugging symbols
+DEBUG = 1
+LINUX_COMPILER = _REDHAT_
+PWLIB_SUPPORT = 0
+
+CFLAGS := -DHAVE_CONFIG_H
+
+ifeq ($(BIT),32)
+    CFLAGS += -m32 
+    CXXFLAGS += -m32 
+else
+    CFLAGS += -m64
+    CXXFLAGS += -m64 
+endif
+
+## Object files that compose the target(s)
+
+OBJS := $(SRC_DIR)/amqp_api \
+        $(SRC_DIR)/amqp_api2 \
+        $(SRC_DIR)/amqp_connection \
+        $(SRC_DIR)/amqp_consumer \
+        $(SRC_DIR)/amqp_framing \
+        $(SRC_DIR)/amqp_fsm \
+        $(SRC_DIR)/amqp_mem \
+        $(SRC_DIR)/amqp_mq \
+        $(SRC_DIR)/amqp_socket \
+        $(SRC_DIR)/amqp_socket2 \
+        $(SRC_DIR)/amqp_table \
+        $(SRC_DIR)/amqp_tcp_socket \
+        $(SRC_DIR)/amqp_timer \
+        $(SRC_DIR)/amqp_url
+        
+
+## Libraries to include in shared object file
+LIBS := event_core event_pthreads
+
+LIB_PATH = $(CURDIR)../Lib_Debug/linux
+
+## Add driver-specific include directory to the search path
+
+INC_PATH += $(CURDIR)../include \
+            $(CURDIR)../include/unix \
+            $(CURDIR)../include/libevent2 \
+            $(CURDIR)../include/libevent2/linux
+
+ifeq ($(PWLIB_SUPPORT),1)
+   INC_PATH += $(PWLIBDIR)/include/ptlib/unix $(PWLIBDIR)/include
+endif
+
+INSTALL_LIB_PATH = $(CURDIR)../Lib_Debug
+
+include $(COMM_DIR)/common.mk
+
