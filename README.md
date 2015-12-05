@@ -1,10 +1,10 @@
 # rabbitmq-c-libevent
 
-Use rabbitmq-c based on libevent.
+Use rabbitmq-c based on libevent.    
 提供基于 libevent 改造的 rabbitmq-c 版本。
 
 
-感谢 alanxz 实现的 [alanxz/rabbitmq-c](https://github.com/alanxz/rabbitmq-c)
+感谢 alanxz 实现的 [alanxz/rabbitmq-c](https://github.com/alanxz/rabbitmq-c)    
 rabbitmq-c-libevent 代码是基于 rabbitmq-c-0.4.1 版本进行的功能添加。
 
 ### Features:
