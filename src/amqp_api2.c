@@ -447,16 +447,3 @@ int add_manager( struct event_base *ev_base, char *dstip, uint16_t dstport, char
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -3,17 +3,8 @@
 * ***** BEGIN LICENSE BLOCK *****
 * Version: MIT
 *
-* Portions created by moooofly are Copyright (c) 2013-2014
+* Portions created by moooofly are Copyright (c) 2013-2015
 * moooofly. All Rights Reserved.
-*
-* Portions created by Alan Antonuk are Copyright (c) 2012-2013
-* Alan Antonuk. All Rights Reserved.
-*
-* Portions created by VMware are Copyright (c) 2007-2012 VMware, Inc.
-* All Rights Reserved.
-*
-* Portions created by Tony Garnock-Jones are Copyright (c) 2009-2010
-* VMware, Inc. and Tony Garnock-Jones. All Rights Reserved.
 *
 * Permission is hereby granted, free of charge, to any person
 * obtaining a copy of this software and associated documentation
@@ -1316,10 +1307,6 @@ void fsm( amqp_connection_state_t conn )
 							fprintf( stderr, "[MQ][%s][fsm:conn_connecting] connect timeout(%d <= 3) on socket(%d)\n", 
 								conn->tag, conn->retry_cnt, amqp_get_sockfd(conn) );
 
-// 							event_assign( &conn->notify_event, conn->base, amqp_get_sockfd(conn), EV_WRITE, event_handler, conn );
-// 							tv.tv_sec = AMQP_CUSTOM_TIMEOUT;
-// 							tv.tv_usec = 0;
-// 							event_add( &conn->notify_event, &tv );
 							update_event( conn, EV_WRITE, AMQP_CUSTOM_TIMEOUT, 0 );
 							stop = 1;
 						}

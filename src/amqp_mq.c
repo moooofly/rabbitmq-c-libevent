@@ -3,17 +3,8 @@
 * ***** BEGIN LICENSE BLOCK *****
 * Version: MIT
 *
-* Portions created by moooofly are Copyright (c) 2013-2014
+* Portions created by moooofly are Copyright (c) 2013-2015
 * moooofly. All Rights Reserved.
-*
-* Portions created by Alan Antonuk are Copyright (c) 2012-2013
-* Alan Antonuk. All Rights Reserved.
-*
-* Portions created by VMware are Copyright (c) 2007-2012 VMware, Inc.
-* All Rights Reserved.
-*
-* Portions created by Tony Garnock-Jones are Copyright (c) 2009-2010
-* VMware, Inc. and Tony Garnock-Jones. All Rights Reserved.
 *
 * Permission is hereby granted, free of charge, to any person
 * obtaining a copy of this software and associated documentation
