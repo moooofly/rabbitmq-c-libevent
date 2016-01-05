@@ -176,8 +176,7 @@ amqp_bytes_t amqp_cstring_bytes( char const *cstr ) {
 	return result;
 }
 
-amqp_bytes_t amqp_bytes_malloc_dup( amqp_bytes_t src )
-{
+amqp_bytes_t amqp_bytes_malloc_dup( amqp_bytes_t src ) {
 	amqp_bytes_t result;
 
 	if ( 0 == src.len )

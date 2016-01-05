@@ -3,8 +3,17 @@
 * ***** BEGIN LICENSE BLOCK *****
 * Version: MIT
 *
-* Portions created by moooofly are Copyright (c) 2013-2015
+* Portions created by moooofly are Copyright (c) 2013-2016
 * moooofly. All Rights Reserved.
+*
+* Portions created by Alan Antonuk are Copyright (c) 2012-2013
+* Alan Antonuk. All Rights Reserved.
+*
+* Portions created by VMware are Copyright (c) 2007-2012 VMware, Inc.
+* All Rights Reserved.
+*
+* Portions created by Tony Garnock-Jones are Copyright (c) 2009-2010
+* VMware, Inc. and Tony Garnock-Jones. All Rights Reserved.
 *
 * Permission is hereby granted, free of charge, to any person
 * obtaining a copy of this software and associated documentation
@@ -259,9 +268,11 @@ MQ_ITEM *mqi_new( void ) {
 // 2. content    - 可能是标准字符串，也可能是二进制数据；需要通过 len 指定其长度；
 // 3. correlation_id - 任何标准字符串，或者非 RPC 模式下设为 NULL。简单起见最好使用字符串形式的阿拉伯数字，如 "1"、"50" 等
 // 4. reply_to   - 以 '\0' 结束的标准字符串，或者非 PRC 模式和 RPC server 下设为 NULL
-// 5. 所有 const char* 类型的字符串必须通过拷贝复制的方式使用，不能假设上层使用的是静态字符数组
+// 5. expiration - 以 '\0' 结束的标准字符串，单位 ms
+// 6. 所有 const char* 类型的字符串必须通过拷贝复制的方式使用，不能假设上层使用的是静态字符数组
 MQ_ITEM *mqi_prepare( const char *exchange, const char *routingkey, const char *content, size_t len, 
-	amqp_boolean_t persistent, amqp_boolean_t rpc_mode, const char *correlation_id, const char *reply_to )
+	amqp_boolean_t persistent, amqp_boolean_t rpc_mode, const char *correlation_id, const char *reply_to,
+	amqp_boolean_t ttl_per_msg, const char *expiration )
 {
 	MQ_ITEM *mq_item = NULL;
 
@@ -282,11 +293,6 @@ MQ_ITEM *mqi_prepare( const char *exchange, const char *routingkey, const char *
 		}
 	}
 
-	if ( NULL == content || '\0' == content[0] || 0 == len )
-	{
-		fprintf( stderr, "mqi_prepare: content is NULL or len is 0! Weird!\n" );
-	}
-
 	mq_item = mqi_new();
 	if ( NULL == mq_item )
 	{
@@ -295,10 +301,6 @@ MQ_ITEM *mqi_prepare( const char *exchange, const char *routingkey, const char *
 	}
 	memset( mq_item, 0 , sizeof(*mq_item) );
 	
-	mq_item->exchange = amqp_bytes_malloc_dup_cstring( exchange );
-	mq_item->routingkey = amqp_bytes_malloc_dup_cstring( routingkey );
-	mq_item->content = amqp_bytes_malloc_dup_binary( content, len );
-
 	switch ( persistent )
 	{
 	case MSG_PERSISTENT:
@@ -329,6 +331,26 @@ MQ_ITEM *mqi_prepare( const char *exchange, const char *routingkey, const char *
 		break;
 	}
 
+	if ( 0 != ttl_per_msg )
+	{
+		mq_item->ttl_per_msg = 1;
+		mq_item->expiration = amqp_bytes_malloc_dup_cstring( expiration );
+	}
+	else
+	{
+		mq_item->ttl_per_msg = 0;
+		mq_item->expiration = amqp_empty_bytes;
+	}
+
+	mq_item->content = amqp_bytes_malloc_dup_binary( content, len );
+	mq_item->exchange = amqp_bytes_malloc_dup_cstring( exchange );
+	mq_item->routingkey = amqp_bytes_malloc_dup_cstring( routingkey );
+
+	if ( NULL == content || 0 == len )
+	{
+		fprintf( stderr, "mqi_prepare: content is NULL or len is 0! Weird!\n" );
+	}
+
 	if ( NULL == mq_item->exchange.bytes || NULL == mq_item->routingkey.bytes )
 	{
 		fprintf( stderr, "mqi_prepare: malloc failed! - 2\n" );
@@ -336,6 +358,7 @@ MQ_ITEM *mqi_prepare( const char *exchange, const char *routingkey, const char *
 
 		return NULL;
 	}
+
 	if ( RPC_MODE == rpc_mode )
 	{
 		if ( NULL == mq_item->correlation_id.bytes )
@@ -367,6 +390,12 @@ void mqi_free_all( MQ_ITEM *item )
 		amqp_bytes_free( item->correlation_id );
 		amqp_bytes_free( item->reply_to );
 	}
+
+	if ( 0 != item->ttl_per_msg )
+	{
+		amqp_bytes_free( item->expiration );
+	}
+
 	amqp_bytes_free( item->exchange );
 	amqp_bytes_free( item->routingkey );
 	amqp_bytes_free( item->content );
