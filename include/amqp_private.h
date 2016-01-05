@@ -130,7 +130,7 @@ typedef struct amqp_link_t_ {
 typedef struct amqp_pool_table_entry_t_ {
 	struct amqp_pool_table_entry_t_ *next;
 	amqp_pool_t pool;       // 为指定 channel 分配的内存池
-	amqp_channel_t channel; // 哪个 channel 使用了当前内存池
+	amqp_channel_t channel; // 占用当前这段内存池的 channel 号
 } amqp_pool_table_entry_t;
 
 struct amqp_connection_state_t_ {
@@ -210,6 +210,9 @@ struct amqp_connection_state_t_ {
 	amqp_boolean_t rpc_mode;
 	amqp_bytes_t correlation_id;
 	amqp_bytes_t reply_to;
+
+	amqp_boolean_t ttl_per_msg;		// 是否设置了 per-Message TTL
+	amqp_bytes_t expiration;		// 用于设置 per-Message TTL 单位是 ms
 
 	amqp_boolean_t mandatory;       // 是否按照 mandatory 方式处理消息
 	content_type contentType;       // 标识消息内容格式

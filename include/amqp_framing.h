@@ -592,7 +592,7 @@ typedef struct amqp_basic_properties_t_ {
   uint8_t priority;             // 0~9
   amqp_bytes_t correlation_id;	// Useful to correlate RPC responses with requests.
   amqp_bytes_t reply_to;		// Commonly used to name a callback queue.
-  amqp_bytes_t expiration;		// 用于设置 per-Message TTL  单位是us
+  amqp_bytes_t expiration;		// 用于设置 per-Message TTL 单位是 ms
   amqp_bytes_t message_id;
   uint64_t timestamp;
   amqp_bytes_t type;

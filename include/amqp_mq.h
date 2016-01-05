@@ -134,9 +134,12 @@ struct msg_queue_item {
 
 	amqp_boolean_t msg_persistent;  // 针对单条 msg 设置持久属性
 
-	amqp_boolean_t rpc_mode;     // 标志是否处于 RPC 模式下
-	amqp_bytes_t correlation_id; // 用于 RPC 模式下关联 response 和 request
-	amqp_bytes_t reply_to;       // 用于 RPC 模式下告之 callback queue
+	amqp_boolean_t rpc_mode;        // 标志是否处于 RPC 模式下
+	amqp_bytes_t correlation_id;    // 用于 RPC 模式下关联 response 和 request
+	amqp_bytes_t reply_to;          // 用于 RPC 模式下告之 callback queue
+
+	amqp_boolean_t ttl_per_msg;		// 是否设置了 per-Message TTL
+	amqp_bytes_t expiration;		// 用于设置 per-Message TTL 单位是 ms
 
 	MQ_ITEM  *next;
 };
@@ -162,11 +165,14 @@ AMQP_PUBLIC_FUNCTION MQ_ITEM *mqi_new( void );
 // 2. content    - 可能是标准字符串，也可能是二进制数据；需要通过 len 指定其长度；
 // 3. correlation_id - 任何标准字符串，或者非 RPC 模式下设为 NULL。简单起见最好使用字符串形式的阿拉伯数字，如 "1"、"50" 等
 // 4. reply_to   - 以 '\0' 结束的标准字符串，或者非 PRC 模式和 RPC server 下设为 NULL
-// 5. 所有 const char* 类型的字符串必须通过拷贝复制的方式使用，不能假设上层使用的是静态字符数组
+// 5. expiration  - 以 '\0' 结束的标准字符串，单位 ms
+
+// 6. 所有 const char* 类型的字符串必须通过拷贝复制的方式使用，不能假设上层使用的是静态字符数组
 AMQP_PUBLIC_FUNCTION MQ_ITEM *mqi_prepare( const char *exchange, const char *routingkey, 
 	const char *content, size_t len, 
 	amqp_boolean_t persistent, amqp_boolean_t rpc_mode, 
-	const char *correlation_id, const char *reply_to );
+	const char *correlation_id, const char *reply_to,
+	amqp_boolean_t ttl_per_msg, const char *expiration );
 
 AMQP_PUBLIC_FUNCTION void mqi_free( MQ_ITEM *item );
 AMQP_PUBLIC_FUNCTION void mqi_free_all( MQ_ITEM *item );
