@@ -207,8 +207,6 @@ int amqp_destroy_connection( amqp_connection_state_t state )
 				break;
 			}
 		}
-		free( state );
-		state = NULL;
 	}
 	return status;
 }

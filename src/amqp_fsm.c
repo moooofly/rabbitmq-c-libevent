@@ -3,8 +3,17 @@
 * ***** BEGIN LICENSE BLOCK *****
 * Version: MIT
 *
-* Portions created by moooofly are Copyright (c) 2013-2015
+* Portions created by moooofly are Copyright (c) 2013-2016
 * moooofly. All Rights Reserved.
+*
+* Portions created by Alan Antonuk are Copyright (c) 2012-2013
+* Alan Antonuk. All Rights Reserved.
+*
+* Portions created by VMware are Copyright (c) 2007-2012 VMware, Inc.
+* All Rights Reserved.
+*
+* Portions created by Tony Garnock-Jones are Copyright (c) 2009-2010
+* VMware, Inc. and Tony Garnock-Jones. All Rights Reserved.
 *
 * Permission is hereby granted, free of charge, to any person
 * obtaining a copy of this software and associated documentation
@@ -1286,7 +1295,6 @@ void fsm( amqp_connection_state_t conn )
 
 		case conn_connecting:
 			{
-// 				struct timeval tv;
 				int reinit = 0;
 				int error;
 				unsigned int errsz = sizeof( error );
@@ -1414,6 +1422,17 @@ void fsm( amqp_connection_state_t conn )
 									snprintf( buf + off, sizeof(buf) - off, "%03d", (int)tv.tv_usec/1000 );
 									fprintf( stderr, "[MQ][s:%d] mq_pop => timestamp = %s\n", amqp_get_sockfd(conn), buf );
 #endif
+
+									if ( 0 != mq_item->ttl_per_msg )
+									{
+										conn->ttl_per_msg = 1;
+										conn->expiration = amqp_bytes_malloc_dup( mq_item->expiration );
+									}
+									else
+									{
+										conn->ttl_per_msg = 0;
+										conn->expiration = amqp_empty_bytes;
+									}
 
 									if ( RPC_MODE == mq_item->rpc_mode )
 									{
@@ -1726,7 +1745,10 @@ void fsm( amqp_connection_state_t conn )
 
 				amqp_destroy_connection( conn );
 
-				fprintf( stderr, "[MQ][%s s:%d][fsm:conn_close] Out\n", conn->tag, amqp_get_sockfd(conn) );
+				fprintf( stderr, "[MQ][%s][fsm:conn_close] Out\n", conn->tag );
+
+				free( conn );
+				conn = NULL;
 
 				stop = 1;
 			}
@@ -2486,6 +2508,13 @@ void fsm( amqp_connection_state_t conn )
 
 				memset( &props, 0, sizeof(props) );
 
+				if ( 0 != conn->ttl_per_msg )
+				{
+					props.expiration = amqp_bytes_malloc_dup( conn->expiration );
+					props._flags |= AMQP_BASIC_EXPIRATION_FLAG;
+					amqp_bytes_free( conn->expiration );
+				}
+
 				// 仅在 RPC 模式下使用
 				if ( RPC_MODE == conn->rpc_mode )
 				{
@@ -2494,10 +2523,7 @@ void fsm( amqp_connection_state_t conn )
 					amqp_bytes_free( conn->correlation_id );
 
 					props.reply_to = amqp_bytes_malloc_dup( conn->reply_to );
-					if ( 0 != props.reply_to.len )
-					{
-						props._flags |= AMQP_BASIC_REPLY_TO_FLAG;
-					}
+					props._flags |= AMQP_BASIC_REPLY_TO_FLAG;
 					amqp_bytes_free( conn->reply_to );
 
 // 					fprintf( stderr, "[MQ][%s s:%d]  --> props.correlation_id.bytes=%s props.correlation_id.len=%d "
